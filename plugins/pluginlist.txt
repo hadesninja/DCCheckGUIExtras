@@ -1,1 +1,2 @@
 Jar_SCA_Utilities.exe: Jar SCA Report Utility
+CVE_Details.exe: Get CVE Details(NVD)
