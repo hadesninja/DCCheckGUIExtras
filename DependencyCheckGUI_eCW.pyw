@@ -8,8 +8,13 @@ import zipfile
 import xml.etree.ElementTree as ET
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QProcess
-from PyQt5.QtWidgets import QMessageBox, QAction, QMenu, QWidget, QVBoxLayout, QApplication
+from PyQt5.QtWidgets import  QAction, QMenu, QWidget, QApplication
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QLabel, QPushButton, QMessageBox
+
+from jar_sca_utilities import SCAGUI, SCAJarTemplateProcessor
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMenuBar, QAction, QLineEdit, QComboBox, QTextEdit, QPushButton, QLabel, QHBoxLayout, QTabWidget, QMenu
+from PyQt5 import QtWidgets
+
 
 
 class DependencyCheckGUI(QtWidgets.QWidget):
@@ -19,7 +24,7 @@ class DependencyCheckGUI(QtWidgets.QWidget):
 
     def initUI(self):
         self.setWindowTitle("Dependency Check GUI")
-        layout = QtWidgets.QVBoxLayout()
+        layout = QVBoxLayout()
 
         # Menu Bar - File Menu
         self.menu_bar = QtWidgets.QMenuBar(self)
@@ -60,8 +65,10 @@ class DependencyCheckGUI(QtWidgets.QWidget):
         load_plugins_action.triggered.connect(self.show_plugin_loader)
         tools_menu.addAction(load_plugins_action)
 
-        # Populate plugins
-        self.populate_plugins_menu()
+        # SCA Template Processor
+        open_sca_processor_action = QtWidgets.QAction("Open SCA Template Processor", self)
+        open_sca_processor_action.triggered.connect(self.open_sca_processor)
+        tools_menu.addAction(open_sca_processor_action)
 
         # Menu Bar - Help Menu
         self.help_menu = self.menu_bar.addMenu("Help")
@@ -130,6 +137,22 @@ class DependencyCheckGUI(QtWidgets.QWidget):
 
         self.setLayout(layout)
         self.ensure_folders()
+
+    def open_sca_processor(self):
+        """Open the SCA Template Processor Tab"""
+        self.sca_processor_window = QWidget()
+        self.sca_processor_window.setWindowTitle("SCA Template Processor")
+
+        # Create a tab widget for SCA features
+        tabs = QTabWidget(self.sca_processor_window)
+        tabs.addTab(SCAGUI(), "SCA Template Generator")
+        tabs.addTab(SCAJarTemplateProcessor(), "SCA Jar Template Processor")
+
+        # Layout
+        layout = QVBoxLayout(self.sca_processor_window)
+        layout.addWidget(tabs)
+        self.sca_processor_window.setLayout(layout)
+        self.sca_processor_window.show()
 
     def open_folder(self, folder_name):
         """Open the folder in the system's default file explorer."""
@@ -653,6 +676,7 @@ class DependencyCheckGUI(QtWidgets.QWidget):
             self, "Scan Complete",
             f"Scan completed successfully.\nReport saved at:\n{output_file_path}"
         )
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
